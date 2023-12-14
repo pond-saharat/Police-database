@@ -341,6 +341,7 @@ function addVehicleToPerson(ownerId, type, colour, licence, callback) {
     </div>
   </div>
 </div>
+
 <script>
 // $('#addVehicleModal .btn-primary').click(function() {
 //     var vehicleType = $('#vehicle-type').val();
@@ -564,4 +565,84 @@ function addNewIncident(vehicle, owner, date, report, offence, callback) {
         }
     });
 }
+</script>
+<!-- Associate Fines -->
+<div class="modal fade" id="associateFineModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addModalLabel">Add fines to </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" class="form-control" id="fine-incident-id" value="">
+        <div class="mb-3">
+            <label for="fine-amount" class="col-form-label">Fine amount</label>
+            <input type="text" class="form-control" id="fine-amount" value="">
+        </div>
+        <div class="mb-3">
+            <label for="fine-point" class="col-form-label">Fine points</label>
+            <input type="text" class="form-control" id="fine-point" value="">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Set</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var targetModal = document.getElementById('associateFineModal');
+
+  targetModal.addEventListener('shown.bs.modal', function (event) {
+      var button = event.relatedTarget;
+      var incidentID = button.getAttribute('data-bs-value');
+      var modalTitle = targetModal.querySelector('.modal-title');
+      modalTitle.textContent = "Add fines to Incident#" + incidentID;
+      $('#fine-incident-id').val(incidentID);
+      $.ajax({
+        type: 'GET',
+        url: './db-script/incident/get-fine.php',
+        data: { incidentID: incidentID},
+        dataType: 'json',
+        success: function(response) {
+          var amount = response[0].Fine_Amount === 'N/A' ? "" : response[0].Fine_Amount;
+          var points = response[0].Fine_Points === 'N/A' ? "" : response[0].Fine_Points;
+            $('#fine-amount').val(amount);
+            $('#fine-point').val(points);
+        },
+        error: function(error) {
+            console.log('Error retriving fine information: ', error);
+        }
+      });
+  });
+});
+
+$('#associateFineModal .btn-primary').click(function() {
+    var incidentId = $('#fine-incident-id').val();
+    var amount = $('#fine-amount').val();
+    var points = $('#fine-point').val();
+    var reloadContent = function() {
+        $('#output').load('./db-script/incident/incident.php');
+    };
+    $.ajax({
+        type: 'POST',
+        url: './db-script/incident/add-fine.php',
+        data: { incidentId: incidentId,
+          amount: amount,
+          points: points
+        },
+        dataType: 'json',
+        success: function(response) {
+            reloadContent();
+        },
+        error: function(error) {
+            console.log('Error while adding fines: ', error);
+        }
+    });
+})
 </script>

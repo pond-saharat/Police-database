@@ -42,7 +42,7 @@ if (mysqli_num_rows($result) > 0) {
         echo "<tr><td>".$row["Incident_ID"]."</td><td>".$row["Vehicle_type"]."</td><td>".$row["Vehicle_colour"]."</td><td>".$row["Vehicle_licence"]."</td><td>".$row["People_name"]."</td><td>".$row["Incident_Date"]."</td><td>".$row["Incident_Report"]."</td><td>".$row["Offence_description"]."</td><td>".$row["Fine_Amount"]."</td><td>".$row["Fine_Points"]."</td><td>";
         echo "<button type='button' class='btn btn-outline-danger";
         if ($_SESSION["admin"] == 0) {echo " disabled";}
-        echo "' data-bs-toggle='modal' data-bs-target='#associateFineModal'>Set Fines</button></a>";
+        echo "' data-bs-toggle='modal' data-bs-target='#associateFineModal' data-bs-value='".$row["Incident_ID"]."'>Set Fines</button></a>";
         echo "&nbsp;&nbsp;";
         echo "</td></tr>";
     }
@@ -74,9 +74,8 @@ $(document).ready(function() {
         $.ajax({
             type: 'GET',
             url: './db-script/people/people.php',
-            data: formData,
+            data: formData, 
             success: function(response) {
-				console.log(response);
 				$('#tableContainer table tbody').html($(response).find('table tbody').html());
             },
             error: function(error) {
