@@ -9,7 +9,7 @@ if (!$conn) {
 
 $username = $_GET['username'];
 
-$sql = "SELECT * FROM Users WHERE User_Name = $username";
+$sql = "SELECT * FROM Users WHERE User_Name = '$username'";
 $result = mysqli_query($conn, $sql);
 
 $response_array = array();

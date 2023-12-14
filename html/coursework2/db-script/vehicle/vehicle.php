@@ -46,7 +46,7 @@ if (mysqli_num_rows($result) > 0) {
     echo "</tbody></table>";
 }
 else {
-    echo "<h1>People</h1>";
+    echo "<h1>Vehicle</h1>";
 	echo "<div id='tableContainer'>";
 	echo '<form method="get" action="" id="searchForm">';
 	echo "

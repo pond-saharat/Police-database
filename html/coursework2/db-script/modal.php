@@ -1,3 +1,74 @@
+<!-- Change password -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="changePasswordModal">Change password</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+            <label for="changepassword-username" class="col-form-label">Username</label>
+            <input type="text" class="form-control" id="changepassword-username" value="" disabled>
+        </div>
+        <div class="mb-3">
+            <label for="changepassword-password" class="col-form-label">Password</label>
+            <input type="password" class="form-control" id="changepassword-password" value="">
+        </div>
+        <div class="mb-3">
+            <label for="changepassword-confirmpassword" class="col-form-label">Confirm password</label>
+            <input type="password" class="form-control" id="changepassword-confirmpassword" value="">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Modify</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var targetModal = document.getElementById('changePasswordModal');
+
+    targetModal.addEventListener('shown.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var value = button.getAttribute('data-bs-value');
+        $('#changepassword-username').val(value)
+    });
+});
+
+$('#changePasswordModal .btn-primary').click(function() {
+    var username = $('#changepassword-username').val()
+    var password = $('#changepassword-password').val();
+    var confirmPassword = $('#changepassword-confirmpassword').val();
+    if (password !== confirmPassword) {
+        alert('Please re-enter your password.');
+        return;
+    }
+    $.ajax({
+          type: 'POST',
+          url: './db-script/change-password.php',
+          data: { username: username,
+            password: password
+          },
+          dataType: 'json',
+          success: function(response) {
+              if (response.status) {
+                  logEverything('People_ID', ownerId, '', '', '','GET', 'People');
+                  location.href='./db-script/log-out.php';
+              }
+          },
+          error: function(error) {
+              console.log('Error while changing a password', error);
+          }
+      });
+
+})
+</script>
+
 <!-- People -->
 <div class="modal fade" id="deletePeopleModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -193,6 +264,7 @@ $('#people-name').change(function() {
                 var details = JSON.parse(response);
                 $('#vehicle-people-address').val(details.address);
                 $('#vehicle-people-licence').val(details.licence);
+                logEverything('People_ID', ownerId, '', '', '','GET', 'People');
             },
             error: function(error) {
                 console.log(error);
@@ -266,6 +338,7 @@ function addNewPerson(name, address, licence, callback) {
           console.log(response);
             if (response.status === 'success') {
                 var newOwnerId = response.newOwnerId;
+                logEverything('People_ID', newOwnerId, newVehicleId, ownerId, newVehicleId,'CREATE', 'People');
                 callback(newOwnerId);
             } else {
                 console.log('Error adding new person:', response.message);
@@ -285,6 +358,7 @@ function addVehicleToPerson(ownerId, type, colour, licence, callback) {
         success: function(response) {
             var newVehicleId = response.newVehicleId;
             console.log('Vehicle added:', response);
+            logEverything('Vehicle_ID', newVehicleId, newVehicleId, ownerId, newVehicleId,'CREATE', 'Vehicle');
             callback(newVehicleId);
         },
         error: function(error) {
@@ -382,7 +456,6 @@ function loadVehicles() {
             response.forEach(function(vehicle) {
                 $dropdown.append('<option value="' + vehicle.Vehicle_ID + '">' + vehicle.Vehicle_type + ' '+  vehicle.Vehicle_licence+ '</option>');
             });
-            
         },
         error: function(error) {
             console.log(error);
@@ -554,6 +627,7 @@ function addNewIncident(vehicle, owner, date, report, offence, callback) {
         success: function(response) {
           console.log(response);
             if (response.status === 'success') {
+                logEverything('Incident_ID', response.incidentId, response.incidentId, owner, vehicle,'CREATE', 'Incident');
                 callback();
             } else {
                 console.log('Error adding new incident: ', response.message);
@@ -609,10 +683,11 @@ document.addEventListener('DOMContentLoaded', function () {
         data: { incidentID: incidentID},
         dataType: 'json',
         success: function(response) {
-          var amount = response[0].Fine_Amount === 'N/A' ? "" : response[0].Fine_Amount;
-          var points = response[0].Fine_Points === 'N/A' ? "" : response[0].Fine_Points;
+            var amount = response[0].Fine_Amount === 'N/A' ? "" : response[0].Fine_Amount;
+            var points = response[0].Fine_Points === 'N/A' ? "" : response[0].Fine_Points;
             $('#fine-amount').val(amount);
             $('#fine-point').val(points);
+            logEverything('Incident_ID', incidentID, incidentID, '', '', '', 'GET', 'Fines');
         },
         error: function(error) {
             console.log('Error retriving fine information: ', error);
@@ -628,6 +703,10 @@ $('#associateFineModal .btn-primary').click(function() {
     var reloadContent = function() {
         $('#output').load('./db-script/incident/incident.php');
     };
+    if (Number.isInteger(amount) && Number.isInteger(points)) {
+        alert("You should input only a number.");
+        return;
+    }
     $.ajax({
         type: 'POST',
         url: './db-script/incident/add-fine.php',
@@ -637,6 +716,7 @@ $('#associateFineModal .btn-primary').click(function() {
         },
         dataType: 'json',
         success: function(response) {
+            logEverything('Incident_ID', incidentId, incidentId, '', '', '', 'CREATE', 'Fines');
             reloadContent();
         },
         error: function(error) {
@@ -696,8 +776,8 @@ $('#addUserModal .btn-primary').click(function() {
           dataType: 'json',
           success: function(response) {
               if (response.exist) {
-                  alert("Please fill in all of the provided fields.");
-                  return false;
+                  alert("You cannot choose this username.");
+                  return;
               } else {
                   $.ajax({
                       type: 'POST',
@@ -708,6 +788,7 @@ $('#addUserModal .btn-primary').click(function() {
                       },
                       dataType: 'json',
                       success: function(response) {
+                          logEverything('User_Name', username, '', '', '', 'CREATE', 'Users');
                           reloadContent();
                       },
                       error: function(error) {
@@ -722,4 +803,26 @@ $('#addUserModal .btn-primary').click(function() {
       });
 
 })
+
+function logEverything(tableId, tableValue, incidentId, peopleId, vehicleId, method, table) {
+    $.ajax({
+        type: 'POST',
+        url: './db-script/log/add-log.php',
+        data: { tableId: tableId,
+          tableValue: tableValue,
+          incidentId: incidentId,
+          peopleId, peopleId,
+          vehicleId: vehicleId,
+          method: method,
+          table: table
+        },
+        dataType: 'json',
+        success: function(response) {
+            console.log('Logged: ', response);
+        },
+        error: function(error) {
+            console.log('Error while adding a log: ', error);
+        }
+    });
+  }
 </script>

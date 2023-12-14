@@ -31,6 +31,18 @@ CREATE DATABASE IF NOT EXISTS `coursework2` DEFAULT CHARACTER SET latin1 COLLATE
 USE `coursework2`;
 
 -- --------------------------------------------------------
+DROP TABLE IF EXISTS `Log`;
+CREATE TABLE IF NOT EXISTS `Log` (
+  `Log_ID` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `User_ID` int(11),
+  `Incident_ID` int(11),
+  `Vehicle_ID` int(11),
+  `People_ID` int(11),
+  `Method` VARCHAR(255),
+  `Table_name` VARCHAR(255),
+  `Affected_record` VARCHAR(255),
+  `Datetime` datetime
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `Users`;
 CREATE TABLE IF NOT EXISTS `Users` (
@@ -42,7 +54,6 @@ CREATE TABLE IF NOT EXISTS `Users` (
 --
 -- Table structure for table `Fines`
 --
-
 INSERT INTO `Users` (`User_ID`, `User_Name`, `User_Password`, `User_Admin`) VALUES
 (1, 'mcnulty', 'plod123', 0),
 (2, 'moreland', 'fuzz42', 0),

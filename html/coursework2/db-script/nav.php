@@ -45,7 +45,7 @@
                         ?>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-dark">
-                        <li><a class="dropdown-item" href="#" onClick= "$('#output').load('./db-script/change-password.php')">Change Password</a></li>
+                        <li><a class="dropdown-item" data-bs-toggle='modal' data-bs-target='#changePasswordModal' data-bs-value='<?php echo $_SESSION["user"];?>'>Change Password</a></li>
                         <div class="dropdown-divider"></div>
                         <li><a class="dropdown-item" href="#" onClick= "location.href='./db-script/log-out.php'">Log out</a></li>
                     </ul>

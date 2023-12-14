@@ -21,6 +21,7 @@ if ($vehicleId != '' && $ownerId != '' && $date != '' && $report != '' && $offen
     mysqli_stmt_bind_param($stmt, "iissi", $vehicleId, $ownerId, $date, $report, $offenceId);
 
     if (mysqli_stmt_execute($stmt)) {
+        $response_array['IncidentId'] = mysqli_insert_id($conn);
         $response_array['status'] = 'success';
         $response_array['message'] = 'A new incident is added.';
     } else {

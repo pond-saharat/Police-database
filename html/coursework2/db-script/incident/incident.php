@@ -27,13 +27,6 @@ $result = mysqli_query($conn, $sql);
 
 if (mysqli_num_rows($result) > 0) {
     echo "<h1>Reports</h1>";
-	echo "<div id='tableContainer'>";
-	echo '<form method="get" action="" id="searchForm">';
-	echo "
-		<div class='input-group mb-3'>
-			<input type='text' class='form-control' name='search' placeholder='Search people by their name or their licence number' aria-label='Recipient\'s username' aria-describedby='basic-addon2' value='".$textToBeSearched."'>
-		</div>
-	</form>";
     echo "<table class='table table-hover'>";
     echo "<thead class='table-dark text-center'><th>ID</th><th>Vehicle type</th><th>Colour</th><th>Vehicle licence</th><th>Vehicle owner</th><th>Date</th><th>Report</th><th>Offence</th><th>Fine amount</th><th>Fine points</th><th>Action</th></tr></thead>";
     echo "<tbody class='table-group-divider'>";
@@ -49,39 +42,5 @@ if (mysqli_num_rows($result) > 0) {
     echo "<tr><td></td><td></td><td></td><td></td><td></td><td></td><td><td></td></td><td></td><td></td><td><button type='button' class='btn btn-outline-success' data-bs-toggle='modal' data-bs-target='#addIncidentModal'>Add</button></td></tr>";
     echo "</tbody></table>";
 }
-else {
-    echo "<h1>People</h1>";
-	echo "<div id='tableContainer'>";
-	echo '<form method="get" action="" id="searchForm">';
-	echo "
-		<div class='input-group mb-3'>
-			<input type='text' class='form-control' name='search' placeholder='Search people by their name or their licence number' aria-label='Recipient\'s username' aria-describedby='basic-addon2' value='".$textToBeSearched."'>
-		</div>
-	</form>";
-    echo "<table class='table table-hover'>";
-    echo "<thead class='table-dark text-center'><th>ID</th><th>Name</th><th>Address</th><th>Driver's Licence</th><th>Action</th></tr></thead>";
-    echo "<tbody class='table-group-divider'>";
-    echo "<tr><td colspan='5' class='text-center'>Nothing found.</td></tr></tbody></table>";
-}
 mysqli_close($conn);
 ?>
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script>
-$(document).ready(function() {
-    $('#searchForm input[name="search"]').on('keyup', function() {
-        var formData = $('#searchForm').serialize();
-
-        $.ajax({
-            type: 'GET',
-            url: './db-script/people/people.php',
-            data: formData, 
-            success: function(response) {
-				$('#tableContainer table tbody').html($(response).find('table tbody').html());
-            },
-            error: function(error) {
-                console.log(error);
-            }
-        });
-    });
-});
-</script>
