@@ -16,7 +16,7 @@ $now = date('Y-m-d H:i:s');
 
 $response_array = array();
 
-$sql = "SELECT FROM * WHERE  Log VALUES (?, ?, ?, ?, ?)";
+$sql = "SELECT FROM * WHERE Log VALUES (?, ?, ?, ?, ?)";
 $stmt = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($stmt, "issss", $userId, $method, $affectedTable, $affectedRecord, $now);
 
@@ -29,4 +29,5 @@ mysqli_stmt_close($stmt);
 mysqli_close($conn);
 
 echo json_encode($response_array);
+header('Content-Type: application/json');
 ?>

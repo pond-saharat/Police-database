@@ -10,40 +10,39 @@ if (!$conn) {
 
 $tableId = $_POST['tableId'] ?? '';
 $tableValue = $_POST['tableValue'] ?? '';
-
-$userId = $_SESSION['id'] ?? 'NULL';
-$incidentId = $_POST['incidentId'] ?? 'NULL';
-$vehicleId = $_POST['vehicleId'] ?? 'NULL';
-$peopleId = $_POST['peopleId'] ?? 'NULL';
-$method = $_POST['method'] ?? 'NULL';
-$affectedTable = $_POST['table'] ?? 'NULL';
+$userId = isset($_SESSION['id']) ? $_SESSION['id'] : 'NULL';
+$incidentId = $_POST['incidentId'] == '' ? 'NULL': $_POST['incidentId'];
+$vehicleId = $_POST['vehicleId'] == '' ? 'NULL' : $_POST['vehicleId'];
+$peopleId = $_POST['peopleId'] == '' ? 'NULL' : $_POST['peopleId'];
+$method = $_POST['method'] == '' ? NULL :  $_POST['method'];
+$affectedTable = $_POST['table'] == '' ? NULL : $_POST['table'];
 $now = date('Y-m-d H:i:s');
 $response_array = array();
 
 if ($tableId != '' && $tableValue != '') {
-    $sql = "SELECT * FROM `?` VALUES `?` = ?";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "ssi", $affectedTable, $tableId, $tableValue);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($statement);
-    $row = mysqli_fetch_assoc($result);
-    $affectedRecord = $row;
+    $sql = "SELECT * FROM $affectedTable WHERE $tableId = '$tableValue'";
+    $result = mysqli_query($conn, $sql);
 
-    // Get Affected table 
-    $sql = "INSERT INTO Log VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "iiiissss", $userId, $incidentId, $vehicleId, $peopleId, $method, $affectedTable, $affectedRecord, $now);
-
-    if (mysqli_stmt_execute($stmt)) {
-        $response_array['status'] = true;
-        $response_array['record'] = $affectedRecord;
+    if ($result) {
+        $row = mysqli_fetch_assoc($result);
+        $affectedRecord = $row;
+        
+        // Insert into Log table
+        $sql = "INSERT INTO Log (User_ID, Incident_ID, Vehicle_ID, People_ID, Method, Table_name, Affected_record, Datetime) VALUES ($userId, $incidentId, $vehicleId, $peopleId, '$method', '$affectedTable', '".json_encode($affectedRecord)."', '$now')";
+        
+        if (mysqli_query($conn, $sql)) {
+            $response_array['status'] = true;
+            $response_array['record'] = $affectedRecord;
+        } else {
+            $response_array['status'] = false;
+            $response_array['error'] = mysqli_error($conn);
+        }
     } else {
         $response_array['status'] = false;
-        $response_array['record'] = $affectedRecord;
+        $response_array['error'] = mysqli_error($conn);
     }
-    mysqli_stmt_close($stmt);
 }
-mysqli_close($conn);
 
+mysqli_close($conn);
 echo json_encode($response_array);
 ?>

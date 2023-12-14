@@ -338,7 +338,7 @@ function addNewPerson(name, address, licence, callback) {
           console.log(response);
             if (response.status === 'success') {
                 var newOwnerId = response.newOwnerId;
-                logEverything('People_ID', newOwnerId, newVehicleId, ownerId, newVehicleId,'CREATE', 'People');
+                logEverything('People_ID', newOwnerId, '', newOwnerId, '','CREATE', 'People');
                 callback(newOwnerId);
             } else {
                 console.log('Error adding new person:', response.message);
@@ -358,7 +358,7 @@ function addVehicleToPerson(ownerId, type, colour, licence, callback) {
         success: function(response) {
             var newVehicleId = response.newVehicleId;
             console.log('Vehicle added:', response);
-            logEverything('Vehicle_ID', newVehicleId, newVehicleId, ownerId, newVehicleId,'CREATE', 'Vehicle');
+            logEverything('Vehicle_ID', newVehicleId, '', ownerId, newVehicleId,'CREATE', 'Vehicle');
             callback(newVehicleId);
         },
         error: function(error) {
@@ -687,7 +687,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var points = response[0].Fine_Points === 'N/A' ? "" : response[0].Fine_Points;
             $('#fine-amount').val(amount);
             $('#fine-point').val(points);
-            logEverything('Incident_ID', incidentID, incidentID, '', '', '', 'GET', 'Fines');
+            logEverything('Incident_ID', incidentID, incidentID, '', '', 'GET', 'Fines');
         },
         error: function(error) {
             console.log('Error retriving fine information: ', error);
@@ -821,7 +821,7 @@ function logEverything(tableId, tableValue, incidentId, peopleId, vehicleId, met
             console.log('Logged: ', response);
         },
         error: function(error) {
-            console.log('Error while adding a log: ', error);
+            console.log('Error while adding a log: ', error.responseText);
         }
     });
   }
