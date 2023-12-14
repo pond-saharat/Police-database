@@ -402,7 +402,6 @@ function loadOffences() {
             response.forEach(function(offence) {
                 $dropdown.append('<option value="' + offence.Offence_ID + '">' + offence.Offence_description + '</option>');
             });
-            
         },
         error: function(error) {
             console.log(error);
@@ -644,5 +643,83 @@ $('#associateFineModal .btn-primary').click(function() {
             console.log('Error while adding fines: ', error);
         }
     });
+})
+</script>
+<!-- Add new officers -->
+<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addModalLabel">Add a new user</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+            <label for="new-user-username" class="col-form-label">Username</label>
+            <input type="text" class="form-control" id="new-user-username" value="">
+        </div>
+        <div class="mb-3">
+            <label for="new-user-password" class="col-form-label">Password</label>
+            <input type="password" class="form-control" id="new-user-password" value="">
+        </div>
+        <form>
+          <div class="mb-3">
+            <label for="new-user-admin" class="col-form-label">User status</label>
+            <select class="form-control" id="new-user-admin">
+              <option value="0">Officer</option>
+              <option value="1">System administrator</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Set</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$('#addUserModal .btn-primary').click(function() {
+    var username = $('#new-user-username').val();
+    var password = $('#new-user-password').val();
+    var admin = $('#new-user-admin').val();
+    var reloadContent = function() {
+        $('#output').load('./db-script/users/users.php');
+    };
+    $.ajax({
+          type: 'GET',
+          url: './db-script/users/check-username.php',
+          data: { username: username},
+          dataType: 'json',
+          success: function(response) {
+              if (response.exist) {
+                  alert("Please fill in all of the provided fields.");
+                  return false;
+              } else {
+                  $.ajax({
+                      type: 'POST',
+                      url: './db-script/users/add-user.php',
+                      data: { username: username,
+                        password: password,
+                        admin: admin
+                      },
+                      dataType: 'json',
+                      success: function(response) {
+                          reloadContent();
+                      },
+                      error: function(error) {
+                          console.log('Error while adding an officer: ', error);
+                      }
+                  });
+              }
+          },
+          error: function(error) {
+              console.log('Error while checking username: ', error);
+          }
+      });
+
 })
 </script>

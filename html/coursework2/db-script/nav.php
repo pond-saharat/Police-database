@@ -28,9 +28,9 @@
                     <ul class="<?php if ($_SESSION["admin"] == 1) {echo "dropdown-menu dropdown-menu-warning";} else {echo "dropdown-menu dropdown-menu-warning";}?>">
                         <?php if ($_SESSION["admin"] == 0) {
                             echo "<li><a class='dropdown-item disabled'>You must be an administrator </br>to perform these actions.</a></li><div class='dropdown-divider'></div>";}?>
-                        <li><a class="<?php if ($_SESSION["admin"] == 1) {echo "dropdown-item";} else {echo "dropdown-item disabled";}?>" href="#" onClick= "$('#output').load('./db-script/fines.php')">Add new officers</a></li>
-                        <li><a class="<?php if ($_SESSION["admin"] == 1) {echo "dropdown-item";} else {echo "dropdown-item disabled";}?>" href="#" onClick= "$('#output').load('./db-script/incident.php')">Update fines</a></li>
-                        <li><a class="<?php if ($_SESSION["admin"] == 1) {echo "dropdown-item";} else {echo "dropdown-item disabled";}?>" href="#" onClick= "$('#output').load('./db-script/fines.php')">Audit log</a></li>
+                        <li><a class="<?php if ($_SESSION["admin"] == 1) {echo "dropdown-item";} else {echo "dropdown-item disabled";}?>" href="#" onClick= "$('#output').load('./db-script/users/users.php')">Add new officers</a></li>
+                        <li><a class="<?php if ($_SESSION["admin"] == 1) {echo "dropdown-item";} else {echo "dropdown-item disabled";}?>" href="#" onClick= "$('#output').load('./db-script/incident/incident.php')">Update fines</a></li>
+                        <li><a class="<?php if ($_SESSION["admin"] == 1) {echo "dropdown-item";} else {echo "dropdown-item disabled";}?>" href="#" onClick= "$('#output').load('./db-script/log/log.php')">Audit log</a></li>
                         <li><a class="<?php if ($_SESSION["admin"] == 1) {echo "dropdown-item";} else {echo "dropdown-item disabled";}?>" href="#" onClick= "$('#output').load('./db-script/reset-database.php')">Reset database</a></li>      
                     </ul>
         </li>
