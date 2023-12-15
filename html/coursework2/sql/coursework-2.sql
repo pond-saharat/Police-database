@@ -57,10 +57,7 @@ CREATE TABLE IF NOT EXISTS `Users` (
 INSERT INTO `Users` (`User_ID`, `User_Name`, `User_Password`, `User_Admin`) VALUES
 (1, 'mcnulty', 'plod123', 0),
 (2, 'moreland', 'fuzz42', 0),
-(3, 'daniels', 'copper99', 1),
-(4, 'test', 'test', 1),
-(5, 'admin','admin',1),
-(6, 'nonadmin', 'nonadmin', 0);
+(3, 'daniels', 'copper99', 1);
 
 DROP TABLE IF EXISTS `Fines`;
 CREATE TABLE IF NOT EXISTS `Fines` (
