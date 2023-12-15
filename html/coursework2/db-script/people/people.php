@@ -36,7 +36,7 @@ if (mysqli_num_rows($result) > 0) {
         echo "<tr><td>".$row["People_ID"]."</td><td>".$row["People_name"]."</td><td>".$row["People_address"]."</td><td>". $row["People_licence"]."</td><td>";
         echo "<button type='button' class='btn btn-outline-primary' data-bs-toggle='modal' data-bs-target='#editPeopleModal' data-bs-value='People&".$row["People_ID"]."'>Edit</button></a>";
         echo "&nbsp;&nbsp;";
-        echo "<button type='button' class='btn btn-outline-danger' data-bs-toggle='modal' data-bs-target='#deletePeopleModal'>Delete</button></a>";
+        echo "<button type='button' class='btn btn-outline-danger' data-bs-toggle='modal' data-bs-target='#deletePeopleModal' data-bs-value='".$row["People_ID"]."'>Delete</button></a>";
         echo "</td></tr>";
     }
     echo "<tr><td></td><td></td><td></td><td></td><td><button type='button' class='btn btn-outline-success' data-bs-toggle='modal' data-bs-target='#addPeopleModal'>Add</button></td></tr>";

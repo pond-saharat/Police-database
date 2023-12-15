@@ -80,6 +80,9 @@ $('#changePasswordModal .btn-primary').click(function() {
         </button>
       </div>
       <div class="modal-body">
+        <form>
+          <input type="hidden" id="delete-people-id" value="">
+        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -98,17 +101,18 @@ $('#changePasswordModal .btn-primary').click(function() {
       </div>
       <div class="modal-body">
         <form>
+          <input type="hidden" id="edit-people-id" value="">
           <div class="mb-3">
-            <label for="people-name" class="col-form-label">Name</label>
-            <input type="text" class="form-control" id="people-name">
+            <label for="edit-people-name" class="col-form-label">Name</label>
+            <input type="text" class="form-control" id="edit-people-name">
           </div>
           <div class="mb-3">
-            <label for="people-address" class="col-form-label">Address</label>
-            <input type="text" class="form-control" id="people-address">
+            <label for="edit-people-address" class="col-form-label">Address</label>
+            <input type="text" class="form-control" id="edit-people-address">
           </div>
           <div class="mb-3">
-            <label for="people-licence" class="col-form-label">Licence Number</label>
-            <input type="text" class="form-control" id="people-licence">
+            <label for="edit-people-licence" class="col-form-label">Licence Number</label>
+            <input type="text" class="form-control" id="edit-people-licence">
           </div>
         </form>
       </div>
@@ -125,23 +129,32 @@ $('#changePasswordModal .btn-primary').click(function() {
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="addModalLabel">Modal title</h5>
+        <h5 class="modal-title" id="addModalLabel">Add a person</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        ...
+        <div class="mb-3">
+          <label for="add-people-name" class="col-form-label">Name</label>
+          <input type="text" class="form-control" id="add-people-name">
+        </div>
+        <div class="mb-3">
+          <label for="add-people-address" class="col-form-label">Address</label>
+          <input type="text" class="form-control" id="add-people-address">
+        </div>
+        <div class="mb-3">
+          <label for="add-people-licence" class="col-form-label">Licence Number</label>
+          <input type="text" class="form-control" id="add-people-licence">
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
       </div>
     </div>
   </div>
 </div>
-
-<!-- People -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var targetModal = document.getElementById('editPeopleModal');
@@ -169,9 +182,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     modalTitle.textContent = "Editing #" + personData['People_ID'];
                     // Update form fields
                     var form = targetModal.querySelector('form');
-                    form.querySelector('#people-name').value = personData['People_name'];
-                    form.querySelector('#people-address').value = personData['People_address'];
-                    form.querySelector('#people-licence').value = personData['People_licence'];
+                    $('#edit-people-id').val(personData['People_ID']);
+                    form.querySelector('#edit-people-name').value = personData['People_name'];
+                    form.querySelector('#edit-people-address').value = personData['People_address'];
+                    form.querySelector('#edit-people-licence').value = personData['People_licence'];
                 } else {
                     console.log('No data received');
                 }
@@ -182,7 +196,86 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+$('#editPeopleModal .btn-primary').click(function() {
+    var id = $('#edit-people-id').val();
+    var name = $('#edit-people-name').val();
+    var address = $('#edit-people-address').val();
+    var licence = $('#edit-people-licence').val();
+    if (!name || !address || !licence) {
+        alert("You should not leave any fields blank.");
+        return;
+    }
+    console.log(id,name,address,licence);
+    var reloadContent = function() {
+        $('#output').load('./db-script/people/people.php');
+    };
+    
+    $.ajax({
+        type: 'POST',
+        url: './db-script/people/edit-person.php',
+        data: { id: id,
+          name:name,
+          address:address,
+          licence:licence
+        },
+        dataType: 'json',
+        success: function(response) {
+            console.log("Success: ", response)
+            reloadContent();    
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
+});
+$('#addPeopleModal .btn-primary').click(function() {
+    var name = $('#add-people-name').val();
+    var address = $('#add-people-address').val();
+    var licence = $('#add-people-licence').val();
+    if (!name || !address || !licence) {
+        alert("You should not leave any fields blank.");
+        return;
+    }
+    var reloadContent = function() {
+        $('#output').load('./db-script/people/people.php');
+    };
+    addNewPerson(name, address, licence, reloadContent);
+});
+
+$('#deletePeopleModal .btn-primary').click(function() {
+    var id = $('#delete-people-id').val();
+    var reloadContent = function() {
+        $('#output').load('./db-script/people/people.php');
+    };
+    $.ajax({
+        type: 'POST',
+        url: './db-script/people/delete-person.php',
+        data: { id: id
+        },
+        dataType: 'json',
+        success: function(response) {
+            console.log("Success: ", response)
+            logEverything('People_ID', response.id, '', response.id, '','DELETE', 'People');
+            reloadContent();    
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
+
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    var targetModal = document.getElementById('deletePeopleModal');
+
+    targetModal.addEventListener('shown.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var value = button.getAttribute('data-bs-value');
+        $('#delete-people-id').val(value);
+    })}
+);
 </script>
+
 <!-- Vehicle Modal -->
 <div class="modal fade" id="addVehicleModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -223,6 +316,7 @@ document.addEventListener('DOMContentLoaded', function () {
     </div>
   </div>
 </div>
+
 <!-- Vehicle: search for people -->
 <script>
 function loadOwners() {
