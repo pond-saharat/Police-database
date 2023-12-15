@@ -37,9 +37,9 @@ if (mysqli_num_rows($result) > 0) {
     echo "<tbody class='table-group-divider'>";
     while($row = mysqli_fetch_assoc($result)) {
         echo "<tr><td>".$row["Vehicle_ID"]."</td><td>".$row["Vehicle_type"]."</td><td>".$row["Vehicle_colour"]."</td><td>". $row["Vehicle_licence"]."</td><td>".$row["People_name"]."</td><td>".$row["People_licence"]."</td><td>";
-        echo "<button type='button' class='btn btn-outline-primary' data-bs-toggle='modal' data-bs-target='#editPeopleModal' data-bs-value='People&".$row["People_name"]."'>Edit</button></a>";
-        echo "&nbsp;&nbsp;";
-        echo "<button type='button' class='btn btn-outline-danger' data-bs-toggle='modal' data-bs-target='#deletePeopleModal'>Delete</button></a>";
+        // echo "<button type='button' class='btn btn-outline-primary' data-bs-toggle='modal' data-bs-target='#editVehicleModal' data-bs-value='".$row["Vehicle_ID"]."'>Edit</button></a>";
+        // echo "&nbsp;&nbsp;";
+        // echo "<button type='button' class='btn btn-outline-danger' data-bs-toggle='modal' data-bs-target='#deleteVehicleModal'>Delete</button></a>";
         echo "</td></tr>";
     }
     echo "<tr><td></td><td></td><td></td><td></td><td></td><td></td><td><button type='button' class='btn btn-outline-success' data-bs-toggle='modal' data-bs-target='#addVehicleModal'>Add</button></td></tr>";

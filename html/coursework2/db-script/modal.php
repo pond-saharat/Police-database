@@ -325,7 +325,6 @@ function loadOwners() {
         url: './db-script/vehicle/get-owners.php',
         dataType: 'json',
         success: function(response) {
-            console.log("People loaded" ,response);
             var $dropdown = $('#vehicle-people-name');
             $dropdown.empty();
             $dropdown.append('<option value="no">No owner</option>');
@@ -342,9 +341,12 @@ function loadOwners() {
 }
 // Load information of people
 $(document).ready(function() {
-    loadOwners();
-    loadVehicles();
-    loadOffences()
+    var t=setInterval(function() {
+      loadOwners();
+      loadVehicles();
+      loadOffences()
+    },1000);
+
 });
 // Change person selection dropdown menu
 $('#people-name').change(function() {
@@ -395,6 +397,14 @@ $('#vehicle-people-name').change(function() {
         $('#newPersonFields').empty();
     }
 });
+document.addEventListener('DOMContentLoaded', function () {
+    var targetModal = document.getElementById('deletePeopleModal');
+
+    targetModal.addEventListener('shown.bs.modal', function (event) {
+      loadOwners();
+    });
+})
+
 $('#addVehicleModal .btn-primary').click(function() {
     var vehicleType = $('#vehicle-type').val();
     var vehicleColour = $('#vehicle-colour').val();
@@ -542,7 +552,6 @@ function loadVehicles() {
         url: './db-script/vehicle/get-vehicles.php',
         dataType: 'json',
         success: function(response) {
-            console.log("Vehicle loaded: ", response);
             var $dropdown = $('#incident-vehicle-id');
             $dropdown.empty();
             $dropdown.append('<option value="">Select a vehicle</option>');
@@ -562,7 +571,6 @@ function loadOffences() {
         url: './db-script/offence/get-offence.php',
         dataType: 'json',
         success: function(response) {
-            console.log("Offence loaded: ", response);
             var $dropdown = $('#incident-offence-id');
             $dropdown.empty();
             $dropdown.append('<option value="">Select a type of offence</option>');
